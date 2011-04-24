@@ -27,6 +27,20 @@
     )
   )
 
+(describe "custom matcher"
+  (define (modulo-7? a b) (= (modulo a 7) (modulo b 7)))
+  (it "should succeed if given numbers are congruent modulo 7"
+    (expect 7 modulo-7? 7)
+    (expect 8 modulo-7? 1)
+    (expect (+ (* 7 5) 3) modulo-7? 3)
+    )
+  (it "should succeed if given numbers are not congruent modulo 7"
+    (expect 7 not modulo-7? 8)
+    (expect 8 not modulo-7? 2)
+    (expect (+ (* 7 5) 3) not modulo-7? 4)
+    )
+  )
+
 (run-suites)
 
 ; vim: filetype=scheme
