@@ -16,24 +16,7 @@
 
 ;;; Matchers
 
-(define-class <matcher> ()
-  ([test
-     :init-keyword :test]
-   ))
-
-(define matcher-table (make-hash-table 'eq?))  ; matcher-name => <matcher>
-
-(define (get-matcher matcher-name)
-  (hash-table-get matcher-table matcher-name))
-
-(define (register-matcher matcher-name test)
-  (hash-table-put! matcher-table
-                   matcher-name
-                   (make <matcher>
-                         :test test)))
-
-(register-matcher 'to-be eq?)
-; TODO: Add more matchers.
+; Currently ordinary predicates can be used as matchers.
 
 
 
@@ -49,12 +32,12 @@
 
 (define-syntax expect
   (syntax-rules ()
-    [(_ actual-value matcher-name expected-value)
-     (let* ([m (get-matcher 'matcher-name)]
+    [(_ actual-value matcher expected-value)
+     (let* ([m matcher]
             [a actual-value]
             [e expected-value]
-            [message (format "Expected ~s ~a ~s" a 'matcher-name e)])
-       (if ((slot-ref m 'test) a e)
+            [message (format "Expected ~s ~a ~s" a 'matcher e)])
+       (if (m a e)
          #t
          (stop-running-this-spec message)))
      ]
