@@ -32,15 +32,15 @@
 
 (define-syntax expect
   (syntax-rules ()
-    [(_ actual-value matcher expected-value)
-     (let* ([m matcher]
-            [a actual-value]
+    [(_ "internal" actual-value matcher-name matcher-procedure expected-value)
+     (let* ([a actual-value]
             [e expected-value]
-            [message (format "Expected ~s ~a ~s" a 'matcher e)])
-       (if (m a e)
+            [message (format "Expected ~s ~a ~s" a matcher-name e)])
+       (if (matcher-procedure a e)
          #t
-         (stop-running-this-spec message)))
-     ]
+         (stop-running-this-spec message)))]
+    [(_ actual-value matcher expected-value)
+     (expect "internal" actual-value 'matcher matcher expected-value)]
     ; TODO: Support "not" matcher variant.
     ))
 
