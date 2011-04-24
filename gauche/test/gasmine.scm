@@ -34,11 +34,11 @@
   (syntax-rules ()
     [(_ "internal" actual-value matcher-name matcher-procedure expected-value)
      (let* ([a actual-value]
-            [e expected-value]
-            [message (format "Expected ~s ~a ~s" a matcher-name e)])
+            [e expected-value])
        (if (matcher-procedure a e)
          #t
-         (stop-running-this-spec message)))]
+         (stop-running-this-spec
+           (format "Expected ~s ~a ~s" a matcher-name e))))]
     [(_ actual-value matcher expected-value)
      (expect "internal" actual-value 'matcher matcher expected-value)]
     ; TODO: Support "not" matcher variant.
