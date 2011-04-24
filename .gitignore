@@ -1,0 +1,8 @@
+Makefile
+VERSION
+autom4te.cache
+config.log
+config.status
+configure
+gauche-gasmine.gpd
+test.log
