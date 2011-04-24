@@ -5,7 +5,7 @@ dnl $Id: template.configure.ac,v 1.4 2008-04-18 12:36:26 shirok Exp $
 dnl
 
 AC_PREREQ(2.54)
-AC_INIT(gauche-gasmine, 1.0, shiro@acm.org)
+AC_INIT(gauche-gasmine, 0.0.0, kana@whileimautomaton.n3t)
 dnl If you want to use the system name (OS, architecture, etc) in the
 dnl configure, uncomment the following line.  In such a case, you need
 dnl to copy config.guess and config.sub from automake distribution.
@@ -56,6 +56,9 @@ dnl Add your macro calls to check required headers, if you have any.
 
 dnl Check for other programs.
 dnl Add your macro calls to check existence of programs, if you have any.
+  dnl $ prove --version
+  dnl TAP::Harness v3.23 and Perl v5.8.8
+AC_PATH_PROG([PROVE], prove)
 
 dnl Check for libraries
 dnl Add your macro calls to check required libraries, if you have any.
