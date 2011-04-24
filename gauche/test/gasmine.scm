@@ -156,14 +156,14 @@
 (define (run-suites :optional (x '()))
   (match x
     [(? null? x)
-     (run-suites (all-suites))]
+     (run-suites (reverse (all-suites)))]
     [(? string? path-to-spec-file)
      (run-suites (open-input-file path-to-spec-file))]
     [(? port? port)
      (parameterize ([all-suites '()])
        (let1 sandbox-module (make-module #f)
          (port-for-each (cut eval <> sandbox-module) (lambda () (read port)))
-         (run-suites (all-suites))))]
+         (run-suites (reverse (all-suites)))))]
     [(and ((? suite? suite) ...) suites)
      (parameterize ([all-suites suites])
        (let ([next-test-count
