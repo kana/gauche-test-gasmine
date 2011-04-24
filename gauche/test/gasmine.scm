@@ -165,17 +165,16 @@
          (port-for-each (cut eval <> sandbox-module) (lambda () (read port)))
          (run-suites (reverse (all-suites)))))]
     [(and ((? suite? suite) ...) suites)
-     (parameterize ([all-suites suites])
-       (let ([next-test-count
-               (let loop ([rest-suites (all-suites)]
-                          [test-count 1])
-                 (if (not (null? rest-suites))
-                   (loop (cdr rest-suites)
-                         (run-suite (car rest-suites) test-count))
-                   test-count))])
-         (format #t
-                 "1..~a\n"
-                 (- next-test-count 1))))]))
+     (let ([next-test-count
+             (let loop ([rest-suites suites]
+                        [test-count 1])
+               (if (not (null? rest-suites))
+                 (loop (cdr rest-suites)
+                       (run-suite (car rest-suites) test-count))
+                 test-count))])
+       (format #t
+               "1..~a\n"
+               (- next-test-count 1)))]))
 
 
 
