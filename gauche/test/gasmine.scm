@@ -41,7 +41,14 @@
            (format "Expected ~s ~a ~s" a matcher-name e))))]
     [(_ actual-value matcher expected-value)
      (expect "internal" actual-value 'matcher matcher expected-value)]
-    ; TODO: Support "not" matcher variant.
+    [(_ actual-value not matcher expected-value)
+     (let ([matcher-name (string-append "not" " " (symbol->string 'matcher))]
+           [matcher-procedure (complement matcher)])
+       (expect "internal"
+               actual-value
+               matcher-name
+               matcher-procedure
+               expected-value))]
     ))
 
 
