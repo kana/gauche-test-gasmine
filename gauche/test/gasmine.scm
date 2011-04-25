@@ -89,7 +89,11 @@
    ))
 
 (define-syntax it
-  (syntax-rules (TODO)
+  (syntax-rules (SKIP TODO)
+    [(_ description SKIP message body ...)
+     (it (format "~a # SKIP ~a" description message)
+         body
+         ...)]
     [(_ description TODO message body ...)
      (it (format "~a # TODO ~a" description message)
          body

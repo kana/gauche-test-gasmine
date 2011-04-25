@@ -21,6 +21,19 @@
       (unlines "ok 1 - should succeed"
                "1..1"))
     )
+  (it "should output its description with SKIP message"
+    (expect
+      (with-output-to-string
+        (lambda ()
+          (parameterize ([all-suites '()])
+            (describe "-"
+              (it "should succeed" SKIP "required tools not found"
+                (expect #t eq? #t)))
+            (run-suites))))
+      equal?
+      (unlines "ok 1 - should succeed # SKIP required tools not found"
+               "1..1"))
+    )
   (it "should output its description with TODO message"
     (expect
       (with-output-to-string
