@@ -1,6 +1,8 @@
 (define-module gauche.test.gasmine
   (export
     ; Public API
+    after
+    before
     describe
     expect
     it
@@ -107,13 +109,33 @@
                        :description description
                        :procedure (lambda () body ...)))]))
 
+(define-syntax before
+  (syntax-rules ()
+    [(_ body ...)
+     (slot-push! (current-suite)
+                 'before-blocks
+                 (lambda () body ...))]))
+
+(define-syntax after
+  (syntax-rules ()
+    [(_ body ...)
+     (slot-push! (current-suite)
+                 'after-blocks
+                 (lambda () body ...))]))
+
 
 
 
 ;;; Suites
 
 (define-class <suite> ()
-  ([description
+  ([after-blocks
+     :init-keyword :after-blocks
+     :init-form (list)]  ; (thunk ...)
+   [before-blocks
+     :init-keyword :before-blocks
+     :init-form (list)]
+   [description
      :init-keyword :description
      :init-form ""]
    [ordered-specs
@@ -123,7 +145,6 @@
      :init-keyword :specs
      :init-form (list)]
    ; TODO: Nested suites.
-   ; TODO: Before/After blocks.
    ))
 
 (define all-suites
@@ -150,7 +171,7 @@
 
 ;;; Utilities
 
-(define (run-spec spec test-count)
+(define (run-spec spec test-count parent-suite)
   (define (ok test-count description additional-message)
     (format #t
             "~a ~a - ~a\n"
@@ -165,10 +186,21 @@
             description
             additional-message))
   (define (run-spec-procedure spec)
-    (guard (e [(<expectation-failure> e)
-               (list #f (slot-ref e 'message))])
-      ((slot-ref spec 'procedure))
-      (list #t #f)))
+    (define (run-blocks suite type)
+      (for-each
+        (lambda (block) (block))
+        (reverse (slot-ref parent-suite type))))
+    (dynamic-wind
+      (lambda ()
+        (run-blocks parent-suite 'before-blocks))
+      (lambda ()
+        (guard (e [(<expectation-failure> e)
+                   (list #f (slot-ref e 'message))])
+          ((slot-ref spec 'procedure))
+          (list #t #f)))
+      (lambda ()
+        (run-blocks parent-suite 'after-blocks))
+      ))
   (match-let1 (succeeded message)
               (run-spec-procedure spec)
     ((if succeeded ok not-ok)
@@ -182,7 +214,7 @@
                [test-count test-count])
       (if (not (null? rest-specs))
         (begin
-          (run-spec (car rest-specs) test-count)
+          (run-spec (car rest-specs) test-count suite)
           (loop (cdr rest-specs) (+ test-count 1)))
         test-count))))
 
