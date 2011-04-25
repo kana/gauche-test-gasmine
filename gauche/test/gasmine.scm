@@ -30,12 +30,17 @@
   (error <expectation-failure>
          :message message))
 
+(define-constant %absent-value (list '%absent-value))
+
 (define-syntax expect
   (syntax-rules (not)
     [(_ "internal" actual-value matcher-name matcher-procedure expected-value)
      (let* ([a actual-value]
-            [e expected-value])
-       (if (matcher-procedure a e)
+            [e expected-value]
+            [arguments (if (eq? e %absent-value)
+                         (list a)
+                         (list a e))])
+       (if (apply matcher-procedure arguments)
          #t
          (stop-running-this-spec
            (format "Expected ~s ~a ~s" a matcher-name e))))]
@@ -47,8 +52,12 @@
                matcher-name
                matcher-procedure
                expected-value))]
+    [(_ actual-value not matcher)
+     (expect actual-value not matcher %absent-value)]
     [(_ actual-value matcher expected-value)
      (expect "internal" actual-value 'matcher matcher expected-value)]
+    [(_ actual-value matcher)
+     (expect actual-value matcher %absent-value)]
     ))
 
 

@@ -52,6 +52,15 @@
     )
   )
 
+(describe "expect without expected value"
+  (it "should succeed if (given-predicate? actual-value) returns true"
+    (expect '() null?)
+    (expect (list) null?)
+    (expect '(hi) not null?)
+    (expect (list 'hi) not null?)
+    )
+  )
+
 (run-suites)
 
 ; vim: filetype=scheme
