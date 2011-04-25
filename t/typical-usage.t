@@ -61,6 +61,28 @@
     )
   )
 
+(describe "expect with error"
+  (it "should succeed if evaluation of actual-value raises an error"
+    (expect (car '()) raise?)
+    (expect (with-input-from-string "\"" read) raise?)
+
+    (expect (car '(a . b)) not raise?)
+    (expect (with-input-from-string "(a . b)" read) not raise?)
+    )
+  (it "should succeed if a specified class of error is raised"
+    (expect (car '()) raise? <error>)
+    (expect (car '()) not raise? <read-error>)
+
+    (expect (with-input-from-string "\"" read) raise? <error>)
+    (expect (with-input-from-string "\"" read) raise? <read-error>)
+    (expect (with-input-from-string "\"" read) not raise? <system-error>)
+    )
+  (it "should identify evaluation failure # TODO known breakage"
+    (define <error>-instance (make <error>))
+    (expect <error>-instance not raise? <error>)
+    )
+  )
+
 (run-suites)
 
 ; vim: filetype=scheme

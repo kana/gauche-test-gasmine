@@ -3,6 +3,7 @@
     describe
     expect
     it
+    raise?
     run-suites
     ))
 (select-module gauche.test.gasmine)
@@ -18,6 +19,9 @@
 
 ; Currently ordinary predicates can be used as matchers.
 
+(define (raise? value :optional (error-class <error>))
+  (is-a? value error-class))
+
 
 
 
@@ -32,11 +36,17 @@
 
 (define-constant %absent-value (list '%absent-value))
 
+(define-syntax eval-with-error-trap
+  (syntax-rules ()
+    [(_ form)
+     (guard (e [else e])
+       form)]))
+
 (define-syntax expect
   (syntax-rules (not)
     [(_ "internal" actual-value matcher-name matcher-procedure expected-value)
-     (let* ([a actual-value]
-            [e expected-value]
+     (let* ([a (eval-with-error-trap actual-value)]
+            [e expected-value]  ; ... should be evaluated without error.
             [arguments (if (eq? e %absent-value)
                          (list a)
                          (list a e))])
