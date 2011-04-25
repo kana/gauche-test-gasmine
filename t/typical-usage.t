@@ -25,6 +25,17 @@
     (expect (eq? 'a 'b) not eq? #t)
     (expect (eq? x 'b) not eq? #t)
     )
+  (it "should not affect identifier ``not'' in actual-value"
+    (expect (not #f) eq? #t)
+    (expect (not #t) eq? #f)
+    )
+  (it "should not affect identifier ``not'' in expected-value"
+    (expect #t eq? (not #f))
+    (expect #f eq? (not #t))
+    )
+  (it "should not affect identifier ``not'' that is not a matcher prefix"
+    (expect not eq? not)
+    )
   )
 
 (describe "custom matcher"

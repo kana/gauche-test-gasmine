@@ -31,7 +31,7 @@
          :message message))
 
 (define-syntax expect
-  (syntax-rules ()
+  (syntax-rules (not)
     [(_ "internal" actual-value matcher-name matcher-procedure expected-value)
      (let* ([a actual-value]
             [e expected-value])
