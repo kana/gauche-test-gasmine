@@ -1,10 +1,14 @@
 (define-module gauche.test.gasmine
   (export
+    ; Public API
     describe
     expect
     it
     raise?
     run-suites
+
+    ; Not public, but exported to test.
+    all-suites
     ))
 (select-module gauche.test.gasmine)
 
@@ -85,7 +89,11 @@
    ))
 
 (define-syntax it
-  (syntax-rules ()
+  (syntax-rules (TODO)
+    [(_ description TODO message body ...)
+     (it (format "~a # TODO ~a" description message)
+         body
+         ...)]
     [(_ description body ...)
      (slot-push! (current-suite)
                  'specs
