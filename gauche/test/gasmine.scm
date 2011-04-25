@@ -31,6 +31,8 @@
 
 ;;; Expectations
 
+; TODO: "Bail out!" syntax.
+
 (define-class <expectation-failure> (<message-condition>)
   ())
 
