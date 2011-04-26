@@ -77,7 +77,7 @@
     (expect (with-input-from-string "\"" read) raise? <read-error>)
     (expect (with-input-from-string "\"" read) not raise? <system-error>)
     )
-  (it "should identify evaluation failure" TODO "known breakage"
+  (it "should identify evaluation failure"
     (define <error>-instance (make <error>))
     (expect <error>-instance not raise? <error>)
     )

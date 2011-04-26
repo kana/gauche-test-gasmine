@@ -26,7 +26,9 @@
 ; Currently ordinary predicates can be used as matchers.
 
 (define (raise? value :optional (error-class <error>))
-  (is-a? value error-class))
+  (and
+    (is-a? value <evaluation-failure>)
+    (is-a? (slot-ref value 'original-error) error-class)))
 
 
 
@@ -44,10 +46,14 @@
 
 (define-constant %absent-value (list '%absent-value))
 
+(define-class <evaluation-failure> ()
+  ([original-error
+     :init-keyword :original-error]))
+
 (define-syntax eval-with-error-trap
   (syntax-rules ()
     [(_ form)
-     (guard (e [else e])
+     (guard (e [else (make <evaluation-failure> :original-error e)])
        form)]))
 
 (define-syntax expect
