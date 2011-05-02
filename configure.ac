@@ -1,11 +1,11 @@
 dnl
-dnl Configuring gauche-gasmine
+dnl Configuring gauche-test-gasmine
 dnl  process this file with autoconf to generate 'configure'.
 dnl $Id: template.configure.ac,v 1.4 2008-04-18 12:36:26 shirok Exp $
 dnl
 
 AC_PREREQ(2.54)
-AC_INIT(gauche-gasmine, 0.0.0, kana@whileimautomaton.n3t)
+AC_INIT(gauche-test-gasmine, 0.0.0, kana@whileimautomaton.n3t)
 dnl If you want to use the system name (OS, architecture, etc) in the
 dnl configure, uncomment the following line.  In such a case, you need
 dnl to copy config.guess and config.sub from automake distribution.

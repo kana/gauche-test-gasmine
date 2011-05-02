@@ -28,7 +28,7 @@ EXEEXT = @EXEEXT@
 LOCAL_PATHS = @LOCAL_PATHS@
 
 # Module-specific stuff
-PACKAGE   = gauche-gasmine
+PACKAGE   = gauche-test-gasmine
 
 ARCHFILES =
 SCMFILES  = $(srcdir)/gauche/test/gasmine.scm
