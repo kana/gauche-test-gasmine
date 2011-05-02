@@ -2,7 +2,7 @@
 
 (add-load-path ".")
 (use gauche.parameter)
-(use gauche.test.gasmine)
+(use test.gasmine)
 
 (define (with-output-to-null thunk)
   (let1 result #f

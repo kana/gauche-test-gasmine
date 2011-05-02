@@ -31,7 +31,7 @@ LOCAL_PATHS = @LOCAL_PATHS@
 PACKAGE   = gauche-test-gasmine
 
 ARCHFILES =
-SCMFILES  = $(srcdir)/gauche/test/gasmine.scm
+SCMFILES  = $(srcdir)/test/gasmine.scm
 HEADERS   = 
 
 TARGET    = $(ARCHFILES)

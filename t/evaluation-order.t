@@ -1,7 +1,7 @@
 #!/usr/bin/env gosh
 
 (add-load-path ".")
-(use gauche.test.gasmine)
+(use test.gasmine)
 
 (define stack '())
 

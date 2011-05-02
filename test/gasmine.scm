@@ -1,4 +1,4 @@
-(define-module gauche.test.gasmine
+(define-module test.gasmine
   (export
     ; Public API
     after
@@ -12,7 +12,7 @@
     ; Not public, but exported to test.
     all-suites
     ))
-(select-module gauche.test.gasmine)
+(select-module test.gasmine)
 
 (use gauche.parameter)
 (use util.list)
@@ -250,4 +250,4 @@
 
 
 
-(provide "gauche/test/gasmine")
+(provide "test/gasmine")

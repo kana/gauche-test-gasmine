@@ -2,7 +2,7 @@
 
 (add-load-path ".")
 (use gauche.parameter)
-(use gauche.test.gasmine)
+(use test.gasmine)
 
 (describe "it"
   (define (unlines . ss)
