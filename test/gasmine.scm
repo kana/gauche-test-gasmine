@@ -60,7 +60,7 @@
   (syntax-rules (not)
     [(_ "internal" actual-value matcher-name matcher-procedure expected-value)
      (let* ([a (eval-with-error-trap actual-value)]
-            [e expected-value]  ; ... should be evaluated without error.
+            [e (eval-with-error-trap expected-value)]
             [arguments (if (eq? e %absent-value)
                          (list a)
                          (list a e))])
