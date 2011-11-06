@@ -1,6 +1,7 @@
 (define-module test.gasmine
   (export
     ; Public API
+    SKIP
     after
     before
     describe
@@ -103,11 +104,7 @@
    ))
 
 (define-syntax it
-  (syntax-rules (SKIP TODO)
-    [(_ description SKIP message body ...)
-     (it (format "~a # SKIP ~a" description message)
-         body
-         ...)]
+  (syntax-rules (TODO)
     [(_ description TODO)
      (it (format "# TODO ~a" description)
          (stop-running-this-spec :todo #t))]
@@ -120,6 +117,11 @@
                  (make <spec>
                        :description description
                        :procedure (lambda () body ...)))]))
+
+(define (SKIP message)
+  (stop-running-this-spec
+    :skip #t
+    :message message))
 
 (define-syntax before
   (syntax-rules ()
@@ -184,21 +186,28 @@
 ;;; Utilities
 
 (define (run-spec spec test-count parent-suite)
-  (define (ok test-count description %more-info)
-    (format #t
-            "~a ~a - ~a\n"
-            "ok"
-            test-count
-            description))
+  (define (get key more-info)
+    (let1 it (memq key more-info)
+      (and it (cadr it))))
+  (define (ok test-count description more-info)
+    (if (get :skip more-info)
+      (format #t
+              "~a ~a - # SKIP ~a (~a)\n"
+              "ok"
+              test-count
+              description
+              (get :message more-info))
+      (format #t
+              "~a ~a - ~a\n"
+              "ok"
+              test-count
+              description)))
   (define (not-ok test-count description more-info)
-    (define (get key)
-      (let1 it (memq key more-info)
-        (and it (cadr it))))
     (define (format-maybe-error maybe-error)
       (if (is-a? maybe-error <evaluation-failure>)
         (ref maybe-error 'original-error)
         maybe-error))
-    (if (get :todo)
+    (if (get :todo more-info)
       (format #t
               "~a ~a - ~a\n"
               "not ok"
@@ -215,11 +224,11 @@
               "not ok"
               test-count
               description
-              (get :actual-value-form)
-              (get :matcher-name)
-              (get :expected-value-form)
-              (format-maybe-error (get :actual-value))
-              (format-maybe-error (get :expected-value)))))
+              (get :actual-value-form more-info)
+              (get :matcher-name more-info)
+              (get :expected-value-form more-info)
+              (format-maybe-error (get :actual-value more-info))
+              (format-maybe-error (get :expected-value more-info)))))
   (define (run-spec-procedure spec)
     (define (run-blocks suite type)
       (for-each
@@ -230,7 +239,8 @@
         (run-blocks parent-suite 'before-blocks))
       (lambda ()
         (guard (e [(<expectation-failure> e)
-                   (list #f (slot-ref e 'message))])
+                   (let1 more-info (slot-ref e 'message)
+                     (list (get :skip more-info) more-info))])
           ((slot-ref spec 'procedure))
           (list #t #f)))
       (lambda ()

@@ -68,11 +68,11 @@
         (lambda ()
           (parameterize ([all-suites '()])
             (describe "-"
-              (it "should succeed" SKIP "required tools not found"
-                (expect #t eq? #t)))
+              (it "should succeed"
+                (SKIP "required tools not found")))
             (run-suites))))
       equal?
-      (unlines "ok 1 - should succeed # SKIP required tools not found"
+      (unlines "ok 1 - # SKIP should succeed (required tools not found)"
                "1..1"))
     )
   (it "should output its description with TODO message"
