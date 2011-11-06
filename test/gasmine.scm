@@ -40,9 +40,9 @@
 (define-class <expectation-failure> (<message-condition>)
   ())
 
-(define (stop-running-this-spec message)
+(define (stop-running-this-spec . keyword-args)
   (error <expectation-failure>
-         :message message))
+         :message keyword-args))
 
 (define-constant %absent-value (list '%absent-value))
 
@@ -67,7 +67,11 @@
        (if (apply matcher-procedure arguments)
          #t
          (stop-running-this-spec
-           (format "Expected ~s ~a ~s" a matcher-name e))))]
+           :actual-value-form 'actual-value
+           :actual-value a
+           :expected-value-form 'expected-value
+           :expected-value e
+           :matcher-name matcher-name)))]
     [(_ actual-value not matcher expected-value)
      (let ([matcher-name (string-append "not" " " (symbol->string 'matcher))]
            [matcher-procedure (complement matcher)])
@@ -178,19 +182,24 @@
 ;;; Utilities
 
 (define (run-spec spec test-count parent-suite)
-  (define (ok test-count description additional-message)
+  (define (ok test-count description %more-info)
     (format #t
             "~a ~a - ~a\n"
             "ok"
             test-count
             description))
-  (define (not-ok test-count description additional-message)
+  (define (not-ok test-count description more-info)
+    (define (get key)
+      (let1 it (memq key more-info)
+        (and it (cadr it))))
     (format #t
-            "~a ~a - ~a\n# ~a\n"
+            "~a ~a - ~a\n# Expected ~s ~a ~s\n"
             "not ok"
             test-count
             description
-            additional-message))
+            (get :actual-value)
+            (get :matcher-name)
+            (get :expected-value)))
   (define (run-spec-procedure spec)
     (define (run-blocks suite type)
       (for-each
@@ -207,12 +216,12 @@
       (lambda ()
         (run-blocks parent-suite 'after-blocks))
       ))
-  (match-let1 (succeeded message)
+  (match-let1 (succeeded more-info)
               (run-spec-procedure spec)
     ((if succeeded ok not-ok)
      test-count
      (slot-ref spec 'description)
-     message)))
+     more-info)))
 
 (define (run-suite suite test-count)
   (let1 ordered-specs (slot-ref suite 'ordered-specs)
