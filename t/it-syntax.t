@@ -21,6 +21,20 @@
       (unlines "ok 1 - should succeed"
                "1..1"))
     )
+  (it "should output details about failure"
+    (expect
+      (with-output-to-string
+        (lambda ()
+          (parameterize ([all-suites '()])
+            (describe "-"
+              (it "should fail"
+                (expect '(#t) equal? '(#f))))
+            (run-suites))))
+      equal?
+      (unlines "not ok 1 - should fail"
+               "# Expected (#t) equal? (#f)"
+               "1..1"))
+    )
   (it "should output its description with SKIP message"
     (expect
       (with-output-to-string
