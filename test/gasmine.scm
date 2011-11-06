@@ -2,6 +2,7 @@
   (export
     ; Public API
     SKIP
+    TODO
     after
     before
     describe
@@ -105,12 +106,6 @@
 
 (define-syntax it
   (syntax-rules (TODO)
-    [(_ description TODO)
-     (it (format "# TODO ~a" description)
-         (stop-running-this-spec :todo #t))]
-    [(_ description TODO message)
-     (it (format "# TODO ~a (~a)" description message)
-         (stop-running-this-spec :todo #t))]
     [(_ description body ...)
      (slot-push! (current-suite)
                  'specs
@@ -121,6 +116,11 @@
 (define (SKIP message)
   (stop-running-this-spec
     :skip #t
+    :message message))
+
+(define (TODO :optional message)
+  (stop-running-this-spec
+    :todo #t
     :message message))
 
 (define-syntax before
@@ -209,10 +209,14 @@
         maybe-error))
     (if (get :todo more-info)
       (format #t
-              "~a ~a - ~a\n"
+              "~a ~a - # TODO ~a~a\n"
               "not ok"
               test-count
-              description)
+              description
+              (let1 message (get :message more-info)
+                (if (undefined? message)
+                  ""
+                  (format " (~a)" message))))
       (format #t
               (string-join
                 '("~a ~a - ~a"

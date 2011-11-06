@@ -81,8 +81,10 @@
         (lambda ()
           (parameterize ([all-suites '()])
             (describe "-"
-              (it "should succeed" TODO)
-              (it "should succeed" TODO "known breakage"))
+              (it "should succeed"
+                (TODO))
+              (it "should succeed"
+                (TODO "known breakage")))
             (run-suites))))
       equal?
       (unlines "not ok 1 - # TODO should succeed"
