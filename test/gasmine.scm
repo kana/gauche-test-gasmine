@@ -108,10 +108,12 @@
      (it (format "~a # SKIP ~a" description message)
          body
          ...)]
-    [(_ description TODO message body ...)
-     (it (format "~a # TODO ~a" description message)
-         body
-         ...)]
+    [(_ description TODO)
+     (it (format "# TODO ~a" description)
+         (stop-running-this-spec :todo #t))]
+    [(_ description TODO message)
+     (it (format "# TODO ~a (~a)" description message)
+         (stop-running-this-spec :todo #t))]
     [(_ description body ...)
      (slot-push! (current-suite)
                  'specs
@@ -192,18 +194,24 @@
     (define (get key)
       (let1 it (memq key more-info)
         (and it (cadr it))))
-    (format #t
-            (string-join
-              '("~a ~a - ~a"
-                "# Expected ~s ~a ~s")
-              "\n"
-              'suffix)
-            "not ok"
-            test-count
-            description
-            (get :actual-value)
-            (get :matcher-name)
-            (get :expected-value)))
+    (if (get :todo)
+      (format #t
+              "~a ~a - ~a\n"
+              "not ok"
+              test-count
+              description)
+      (format #t
+              (string-join
+                '("~a ~a - ~a"
+                  "# Expected ~s ~a ~s")
+                "\n"
+                'suffix)
+              "not ok"
+              test-count
+              description
+              (get :actual-value)
+              (get :matcher-name)
+              (get :expected-value))))
   (define (run-spec-procedure spec)
     (define (run-blocks suite type)
       (for-each

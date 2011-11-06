@@ -54,13 +54,13 @@
         (lambda ()
           (parameterize ([all-suites '()])
             (describe "-"
-              (it "should succeed" TODO "known breakage"
-                (expect #t eq? #f)))
+              (it "should succeed" TODO)
+              (it "should succeed" TODO "known breakage"))
             (run-suites))))
       equal?
-      (unlines "not ok 1 - should succeed # TODO known breakage"
-               "# Expected #t eq? #f"
-               "1..1"))
+      (unlines "not ok 1 - # TODO should succeed"
+               "not ok 2 - # TODO should succeed (known breakage)"
+               "1..2"))
     )
   )
 
