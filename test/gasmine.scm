@@ -193,7 +193,11 @@
       (let1 it (memq key more-info)
         (and it (cadr it))))
     (format #t
-            "~a ~a - ~a\n# Expected ~s ~a ~s\n"
+            (string-join
+              '("~a ~a - ~a"
+                "# Expected ~s ~a ~s")
+              "\n"
+              'suffix)
             "not ok"
             test-count
             description
