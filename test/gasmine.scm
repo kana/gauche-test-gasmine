@@ -203,14 +203,18 @@
       (format #t
               (string-join
                 '("~a ~a - ~a"
-                  "# Expected ~s ~a ~s")
+                  "# Expected ~s ~a ~s"
+                  "#     Actual value: ~s"
+                  "#   Expected value: ~s")
                 "\n"
                 'suffix)
               "not ok"
               test-count
               description
-              (get :actual-value)
+              (get :actual-value-form)
               (get :matcher-name)
+              (get :expected-value-form)
+              (get :actual-value)
               (get :expected-value))))
   (define (run-spec-procedure spec)
     (define (run-blocks suite type)

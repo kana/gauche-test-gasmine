@@ -32,7 +32,9 @@
             (run-suites))))
       equal?
       (unlines "not ok 1 - should fail"
-               "# Expected (#t) equal? (#f)"
+               "# Expected '(#t) equal? '(#f)"
+               "#     Actual value: (#t)"
+               "#   Expected value: (#f)"
                "1..1"))
     )
   (it "should output its description with SKIP message"
