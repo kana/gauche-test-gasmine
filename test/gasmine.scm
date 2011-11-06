@@ -194,6 +194,10 @@
     (define (get key)
       (let1 it (memq key more-info)
         (and it (cadr it))))
+    (define (format-maybe-error maybe-error)
+      (if (is-a? maybe-error <evaluation-failure>)
+        (ref maybe-error 'original-error)
+        maybe-error))
     (if (get :todo)
       (format #t
               "~a ~a - ~a\n"
@@ -214,8 +218,8 @@
               (get :actual-value-form)
               (get :matcher-name)
               (get :expected-value-form)
-              (get :actual-value)
-              (get :expected-value))))
+              (format-maybe-error (get :actual-value))
+              (format-maybe-error (get :expected-value)))))
   (define (run-spec-procedure spec)
     (define (run-blocks suite type)
       (for-each

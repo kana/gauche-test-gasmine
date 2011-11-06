@@ -37,6 +37,31 @@
                "#   Expected value: (#f)"
                "1..1"))
     )
+  (it "should output details about evaluation failure"
+    (expect
+      (with-output-to-string
+        (lambda ()
+          (parameterize ([all-suites '()])
+            (describe "-"
+              (it "should fail"
+                (expect (#t) equal? '(#f))))
+            (describe "-"
+              (it "should fail"
+                (expect '(#t) equal? (#f))))
+            (run-suites))))
+      equal?
+      (unlines "not ok 1 - should fail"
+               "# Expected (#t) equal? '(#f)"
+               (format "#     Actual value: ~s"
+                       (make <error> :message "invalid application: (#t)"))
+               "#   Expected value: (#f)"
+               "not ok 2 - should fail"
+               "# Expected '(#t) equal? (#f)"
+               "#     Actual value: (#t)"
+               (format "#   Expected value: ~s"
+                       (make <error> :message "invalid application: (#f)"))
+               "1..2"))
+    )
   (it "should output its description with SKIP message"
     (expect
       (with-output-to-string
