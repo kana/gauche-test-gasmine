@@ -207,32 +207,34 @@
       (if (is-a? maybe-error <evaluation-failure>)
         (ref maybe-error 'original-error)
         maybe-error))
-    (if (get :todo more-info)
-      (format #t
-              "~a ~a - # TODO ~a~a\n"
-              "not ok"
-              test-count
-              description
-              (let1 message (get :message more-info)
-                (if (undefined? message)
-                  ""
-                  (format " (~a)" message))))
-      (format #t
-              (string-join
-                '("~a ~a - ~a"
-                  "# Expected ~s ~a ~s"
-                  "#     Actual value: ~s"
-                  "#   Expected value: ~s")
-                "\n"
-                'suffix)
-              "not ok"
-              test-count
-              description
-              (get :actual-value-form more-info)
-              (get :matcher-name more-info)
-              (get :expected-value-form more-info)
-              (format-maybe-error (get :actual-value more-info))
-              (format-maybe-error (get :expected-value more-info)))))
+    (cond
+      [(get :todo more-info)
+       (format #t
+               "~a ~a - # TODO ~a~a\n"
+               "not ok"
+               test-count
+               description
+               (let1 message (get :message more-info)
+                     (if (undefined? message)
+                       ""
+                       (format " (~a)" message))))]
+      [else
+        (format #t
+                (string-join
+                  '("~a ~a - ~a"
+                    "# Expected ~s ~a ~s"
+                    "#     Actual value: ~s"
+                    "#   Expected value: ~s")
+                  "\n"
+                  'suffix)
+                "not ok"
+                test-count
+                description
+                (get :actual-value-form more-info)
+                (get :matcher-name more-info)
+                (get :expected-value-form more-info)
+                (format-maybe-error (get :actual-value more-info))
+                (format-maybe-error (get :expected-value more-info)))]))
   (define (run-spec-procedure spec)
     (define (run-blocks suite type)
       (for-each
