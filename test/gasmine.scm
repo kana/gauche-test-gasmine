@@ -13,10 +13,14 @@
 
     ; Not public, but exported to test.
     all-suites
+    with-gasmine-output-to-null
+    with-gasmine-output-to-port
+    with-gasmine-output-to-string
     ))
 (select-module test.gasmine)
 
 (use gauche.parameter)
+(use gauche.vport)
 (use util.list)
 (use util.match)
 
@@ -305,6 +309,24 @@
        (format #t
                "1..~a\n"
                (- next-test-count 1)))]))
+
+(define (with-gasmine-output-to-port port thunk)
+  (with-output-to-port
+    port
+    (lambda ()
+      (parameterize ([all-suites '()])
+        (thunk)
+        (run-suites)
+        (values)))))
+
+(define (with-gasmine-output-to-string thunk)
+  (call-with-output-string
+    (lambda (port)
+      (with-gasmine-output-to-port port thunk))))
+
+(define (with-gasmine-output-to-null thunk)
+  (define null-port (make <virtual-output-port> :putb (lambda (_))))
+  (with-gasmine-output-to-port null-port thunk))
 
 
 
