@@ -218,6 +218,20 @@
                      (if (undefined? message)
                        ""
                        (format " (~a)" message))))]
+      [(eq? (get :expected-value more-info) %absent-value)
+       (format #t
+               (string-join
+                 '("~a ~a - ~a"
+                   "# Expected ~s ~a"
+                   "#     Actual value: ~s")
+                 "\n"
+                 'suffix)
+               "not ok"
+               test-count
+               description
+               (get :actual-value-form more-info)
+               (get :matcher-name more-info)
+               (format-maybe-error (get :actual-value more-info)))]
       [else
         (format #t
                 (string-join

@@ -21,7 +21,7 @@
       (unlines "ok 1 - should succeed"
                "1..1"))
     )
-  (it "should output details about failure"
+  (it "should output details about failure with expected value"
     (expect
       (with-output-to-string
         (lambda ()
@@ -35,6 +35,22 @@
                "# Expected '(#t) equal? '(#f)"
                "#     Actual value: (#t)"
                "#   Expected value: (#f)"
+               "1..1"))
+    )
+  (it "should output details about failure without expected value"
+    (expect
+      (with-output-to-string
+        (lambda ()
+          (parameterize ([all-suites '()])
+            (describe "-"
+              (it "should match"
+                (define (foo) "foo")
+                (expect (foo) #/^bar$/)))
+            (run-suites))))
+      equal?
+      (unlines "not ok 1 - should match"
+               "# Expected (foo) #/^bar$/"
+               "#     Actual value: \"foo\""
                "1..1"))
     )
   (it "should output details about evaluation failure"
